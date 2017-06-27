@@ -43,25 +43,13 @@
 #include <QtQml/private/qqmljsparser_p.h>
 #include <QtQml/private/qqmljsengine_p.h>
 
-#if QT_VERSION >= 0x050300
 # include <QtQml/private/qqmlirbuilder_p.h>
-#else
-# include <QtQml/private/qqmlscript_p.h>
-#endif
 
 static bool s_silent = false;
 
 static void remove_metadata(QString &code)
 {
-    // Removes .pragma library and such, otherwise we get a syntax error.
-#if QT_VERSION >= 0x050300
-        QQmlJS::DiagnosticMessage metaDataError;
-        QmlIR::Document irUnit(/**debugger=*/false);
-        irUnit.extractScriptMetaData(code, &metaDataError);
-#else
-        QQmlError metaDataError;
-        QQmlScript::Parser::extractMetaData(code, &metaDataError);
-#endif
+    QmlIR::Document::removeScriptPragmas(code);
 }
 
 static QStringList semanticBlackList()
